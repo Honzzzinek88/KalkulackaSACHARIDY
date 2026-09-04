@@ -1125,11 +1125,7 @@ function getCategories() {
 ════════════════════════════════════════════════════════ */
 function renderHome() {
   // Favorites
-  const favFoods = foods.filter(f => favorites.has(f.name));
-  const favsSection = document.getElementById('favs-section');
-  const favGrid = document.getElementById('fav-grid');
-  favsSection.style.display = favFoods.length ? '' : 'none';
-  favGrid.innerHTML = favFoods.map(f => foodTileHTML(f)).join('');
+  renderFavSection();
 
   // Categories
   const cats = getCategories();
@@ -1199,11 +1195,22 @@ function toggleFav(name) {
   if (favorites.has(name)) favorites.delete(name);
   else favorites.add(name);
   saveState();
-  // update stars in current view
+  // aktualizuj hvězdičky v aktuálním pohledu
   document.querySelectorAll(`.fav-star[data-fav="${CSS.escape(name)}"]`).forEach(s => {
     s.classList.toggle('active', favorites.has(name));
   });
-  renderHome(); // update fav row
+  // vždy znovu vykresli domovskou sekci oblíbených
+  renderFavSection();
+  showToast(favorites.has(name) ? '⭐ Přidáno do oblíbených' : 'Odebráno z oblíbených');
+}
+
+function renderFavSection() {
+  const favFoods = foods.filter(f => favorites.has(f.name));
+  const favsSection = document.getElementById('favs-section');
+  const favGrid = document.getElementById('fav-grid');
+  favsSection.style.display = favFoods.length ? '' : 'none';
+  favGrid.innerHTML = favFoods.map(f => foodTileHTML(f)).join('');
+  bindFoodTileEvents(favGrid);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1316,11 +1323,16 @@ document.getElementById('search-clear').addEventListener('click', () => {
   renderHome();
 });
 
+/* normalizace textu — odstraní diakritiku, převede na malá */
+function normalize(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+
 function doSearch(q) {
   if (!q) { showView('home'); renderHome(); return; }
   showView('search');
-  const low = q.toLowerCase();
-  const results = foods.filter(f => f.name.toLowerCase().includes(low));
+  const low = normalize(q);
+  const results = foods.filter(f => normalize(f.name).includes(low));
   const grid = document.getElementById('results-grid');
   const empty = document.getElementById('results-empty');
   grid.innerHTML = results.map(f => foodTileHTML(f)).join('');
@@ -1472,6 +1484,19 @@ loadState();
 updateDataSourceLabel();
 renderHome();
 updateCartBar();
+
+// Tlačítko zpět na mobilu — zavře overlay místo odchodu z aplikace
+window.addEventListener('popstate', () => {
+  // Zavři nejprve otevřený overlay
+  const open = document.querySelector('.overlay.open');
+  if (open) { closeOverlay(open.id); history.pushState(null,'',location.href); return; }
+  // Pak zavři food view
+  if (currentCat) { showView('home'); renderHome(); history.pushState(null,'',location.href); return; }
+  // Jinak zůstaň (nezavírej app)
+  history.pushState(null,'',location.href);
+});
+// Pushni stav aby popstate fungoval
+history.pushState(null,'',location.href);
 
 // Service Worker registration (for PWA offline)
 if ('serviceWorker' in navigator) {
