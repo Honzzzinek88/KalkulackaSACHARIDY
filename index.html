@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1B4F72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sacharidy">
+<title>Sacharidy</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto+Mono:wght@500;700&display=swap">
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --bg:        #F0F7F5;
+  --surface:   #FFFFFF;
+  --surface2:  #E4F0EC;
+  --border:    #C8DDD7;
+  --text:      #0F2A38;
+  --text2:     #4A7080;
+  --accent:    #1B7A5E;
+  --accent-lt: #A8D8C8;
+  --accent-dk: #145A46;
+  --tile-bg:   #FFFFFF;
+  --tile-sh:   0 2px 8px rgba(27,122,94,.10);
+  --tile-sh-h: 0 4px 16px rgba(27,122,94,.20);
+  --fav:       #E8A020;
+  --danger:    #C0392B;
+  --result-bg: #1B7A5E;
+  --result-tx: #FFFFFF;
+  --overlay:   rgba(15,42,56,.55);
+  --num-bg:    #F0F7F5;
+  --num-tx:    #0F2A38;
+  --num-acc:   #1B7A5E;
+  --num-acc-tx:#FFFFFF;
+  --num-del:   #C0392B;
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  #FFFFFF;
+  --cat-icon-size: 2rem;
+  --r: 16px;
+  --r-sm: 10px;
+  --transition: .18s cubic-bezier(.4,0,.2,1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0A1E28;
+    --surface:   #132530;
+    --surface2:  #1A3040;
+    --border:    #2A4858;
+    --text:      #E8F4F0;
+    --text2:     #7AABB8;
+    --accent:    #2ABFA0;
+    --accent-lt: #1B7A5E;
+    --accent-dk: #3DD4B6;
+    --tile-bg:   #132530;
+    --tile-sh:   0 2px 8px rgba(0,0,0,.35);
+    --tile-sh-h: 0 4px 18px rgba(0,0,0,.50);
+    --fav:       #F0B429;
+    --result-bg: #1B6E54;
+    --num-bg:    #132530;
+    --num-tx:    #E8F4F0;
+    --num-acc:   #2ABFA0;
+    --num-acc-tx:#0A1E28;
+    --num-del:   #E74C3C;
+    --num-del-tx:#FFFFFF;
+    --sheet-bg:  #132530;
+    --overlay:   rgba(0,0,0,.72);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #0A1E28;
+  --surface:   #132530;
+  --surface2:  #1A3040;
+  --border:    #2A4858;
+  --text:      #E8F4F0;
+  --text2:     #7AABB8;
+  --accent:    #2ABFA0;
+  --accent-lt: #1B7A5E;
+  --accent-dk: #3DD4B6;
+  --tile-bg:   #132530;
+  --tile-sh:   0 2px 8px rgba(0,0,0,.35);
+  --tile-sh-h: 0 4px 18px rgba(0,0,0,.50);
+  --fav:       #F0B429;
+  --result-bg: #1B6E54;
+  --num-bg:    #132530;
+  --num-tx:    #E8F4F0;
+  --num-acc:   #2ABFA0;
+  --num-acc-tx:#0A1E28;
+  --num-del:   #E74C3C;
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  #132530;
+  --overlay:   rgba(0,0,0,.72);
+}
+
+/* ── RESET & BASE ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+input { font-family: inherit; }
+
+/* ── TOP BAR ────────────────────────────────────────────── */
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 10px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+#logo {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: -.5px;
+  flex: 1;
+  line-height: 1;
+}
+#logo span { color: var(--text2); font-weight: 600; font-size: .85em; }
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+.icon-btn:hover, .icon-btn:active { background: var(--surface2); color: var(--accent); }
+.icon-btn svg { width: 22px; height: 22px; }
+
+/* ── SEARCH BAR ─────────────────────────────────────────── */
+#searchbar {
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+#search {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  border-radius: 24px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color var(--transition);
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--text2); font-weight: 400; }
+#search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text2);
+  pointer-events: none;
+}
+#search-clear {
+  position: absolute;
+  right: 10px;
+  display: none;
+  color: var(--text2);
+  padding: 4px;
+  border-radius: 50%;
+}
+#search-clear.visible { display: flex; align-items: center; justify-content: center; }
+
+/* ── CONTENT AREA ───────────────────────────────────────── */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── SECTION LABEL ─────────────────────────────────────── */
+.section-label {
+  font-size: .7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text2);
+  margin: 16px 0 8px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ── CATEGORY TILES ─────────────────────────────────────── */
+#cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.cat-tile {
+  background: var(--tile-bg);
+  border-radius: var(--r);
+  box-shadow: var(--tile-sh);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  transition: box-shadow var(--transition), transform var(--transition);
+  border: 1.5px solid var(--border);
+  min-height: 88px;
+}
+.cat-tile:active { transform: scale(.97); box-shadow: var(--tile-sh-h); }
+.cat-icon { font-size: var(--cat-icon-size); line-height: 1; }
+.cat-name { font-weight: 800; font-size: .95rem; color: var(--text); }
+.cat-count { font-size: .75rem; color: var(--text2); font-weight: 600; }
+
+/* ── FOOD TILES ─────────────────────────────────────────── */
+#food-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.food-tile {
+  background: var(--tile-bg);
+  border-radius: var(--r);
+  box-shadow: var(--tile-sh);
+  padding: 14px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1.5px solid var(--border);
+  transition: box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  min-height: 80px;
+}
+.food-tile:active { transform: scale(.97); box-shadow: var(--tile-sh-h); }
+.food-name {
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--text);
+  line-height: 1.3;
+  padding-right: 24px;
+}
+.food-carbs {
+  font-family: 'Roboto Mono', monospace;
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+.fav-star {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-size: 1rem;
+  color: var(--border);
+  transition: color var(--transition), transform var(--transition);
+  padding: 4px;
+  line-height: 1;
+}
+.fav-star.active { color: var(--fav); }
+.fav-star:active { transform: scale(1.3); }
+
+/* ── BREADCRUMB ─────────────────────────────────────────── */
+#breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 0;
+  flex-shrink: 0;
+}
+#breadcrumb button {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 6px 0;
+}
+#breadcrumb .sep { color: var(--text2); font-size: .8rem; }
+#breadcrumb .cur { font-size: .85rem; font-weight: 700; color: var(--text2); }
+#breadcrumb { display: none; }
+#breadcrumb.visible { display: flex; }
+
+/* ── BOTTOM CART BAR ────────────────────────────────────── */
+#cart-bar {
+  display: none;
+  flex-shrink: 0;
+  background: var(--result-bg);
+  color: var(--result-tx);
+  padding: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#cart-bar.visible { display: flex; }
+#cart-label { font-size: .8rem; font-weight: 700; opacity: .8; }
+#cart-total {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+#cart-unit { font-size: .8rem; opacity: .8; margin-left: 2px; }
+#cart-items-count {
+  background: rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: .75rem;
+  font-weight: 800;
+}
+#cart-btns { display: flex; gap: 8px; }
+#btn-cart-view, #btn-cart-clear {
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: .8rem;
+}
+#btn-cart-view { background: rgba(255,255,255,.25); color: #fff; }
+#btn-cart-clear { background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); }
+
+/* ── OVERLAY (numpad + sheets) ──────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.sheet {
+  background: var(--sheet-bg);
+  border-radius: 24px 24px 0 0;
+  padding: 16px;
+  transform: translateY(30px);
+  transition: transform .22s cubic-bezier(.4,0,.2,1);
+  max-height: 92vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.overlay.open .sheet { transform: translateY(0); }
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.sheet-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.sheet-sub {
+  font-size: .8rem;
+  color: var(--text2);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* ── NUMPAD ─────────────────────────────────────────────── */
+#numpad-food-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+#numpad-carbs-info {
+  font-size: .8rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+#gram-display {
+  background: var(--surface2);
+  border-radius: var(--r-sm);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+#gram-value {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 3ch;
+  letter-spacing: -1px;
+}
+#gram-unit { color: var(--text2); font-weight: 700; font-size: 1.1rem; }
+#result-preview {
+  margin-left: auto;
+  text-align: right;
+}
+#result-g {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+#result-label { font-size: .7rem; color: var(--text2); font-weight: 700; }
+#numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.num-btn {
+  height: 60px;
+  border-radius: var(--r-sm);
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: var(--num-bg);
+  color: var(--num-tx);
+  border: 1.5px solid var(--border);
+  transition: background var(--transition), transform var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.num-btn:active { transform: scale(.94); }
+.num-btn.acc { background: var(--num-acc); color: var(--num-acc-tx); border-color: transparent; }
+.num-btn.del { background: var(--num-del); color: var(--num-del-tx); border-color: transparent; }
+.num-btn.wide { grid-column: span 2; }
+.num-btn.action { background: var(--accent); color: #fff; border-color: transparent; font-size: 1rem; }
+.preset-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.preset-btn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--text2);
+  transition: background var(--transition), color var(--transition);
+}
+.preset-btn:active { background: var(--accent-lt); color: var(--accent-dk); }
+
+/* ── CART SHEET ─────────────────────────────────────────── */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-name { flex: 1; font-weight: 700; font-size: .9rem; color: var(--text); }
+.cart-item-detail { font-size: .78rem; color: var(--text2); font-weight: 600; }
+.cart-item-carbs {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 60px;
+  text-align: right;
+}
+.cart-item-del {
+  color: var(--danger);
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+}
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0 4px;
+}
+.cart-total-label { font-weight: 800; font-size: 1rem; color: var(--text); }
+.cart-total-val {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+#btn-cart-close-sheet {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--r);
+  font-size: 1rem;
+  font-weight: 800;
+  margin-top: 14px;
+}
+
+/* ── SETTINGS SHEET ─────────────────────────────────────── */
+.settings-section { margin-bottom: 20px; }
+.settings-title {
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row-icon { font-size: 1.4rem; width: 32px; text-align: center; }
+.settings-row-text { flex: 1; }
+.settings-row-label { font-weight: 700; font-size: .9rem; color: var(--text); }
+.settings-row-sub { font-size: .75rem; color: var(--text2); font-weight: 600; margin-top: 2px; }
+.settings-btn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+/* theme toggle */
+.theme-toggle {
+  display: flex;
+  background: var(--surface2);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+.theme-opt {
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--text2);
+  transition: background var(--transition), color var(--transition);
+}
+.theme-opt.active { background: var(--accent); color: #fff; }
+
+/* ── FILE INPUT HIDDEN ──────────────────────────────────── */
+#file-input { display: none; }
+
+/* ── INFO / HOW-TO SHEET ────────────────────────────────── */
+.info-block {
+  background: var(--surface2);
+  border-radius: var(--r-sm);
+  padding: 14px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--accent);
+}
+.info-block h3 { font-size: .9rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.info-block p, .info-block li { font-size: .82rem; color: var(--text2); font-weight: 600; line-height: 1.5; }
+.info-block ul { padding-left: 16px; }
+.info-block li { margin-bottom: 4px; }
+code {
+  background: var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: .85em;
+}
+
+/* ── SEARCH RESULTS ─────────────────────────────────────── */
+#search-results { display: none; }
+#search-results.visible { display: block; }
+
+/* ── EMPTY STATE ─────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text2);
+  font-weight: 600;
+  font-size: .9rem;
+}
+.empty-state .emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+/* ── TOAST ───────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: .85rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .22s, transform .22s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── DESKTOP LAYOUT ──────────────────────────────────────── */
+@media (min-width: 640px) {
+  body { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  #cat-grid { grid-template-columns: repeat(3, 1fr); }
+  #food-grid { grid-template-columns: repeat(3, 1fr); }
+  .num-btn { height: 64px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="logo">Sacharidy <span>kalkulačka</span></div>
+  <button class="icon-btn" id="btn-cart" title="Součet jídel" aria-label="Košík">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+  </button>
+  <button class="icon-btn" id="btn-settings" title="Nastavení" aria-label="Nastavení">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+  </button>
+</div>
+
+<!-- SEARCH -->
+<div id="searchbar">
+  <div id="search-wrap">
+    <svg id="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="search" type="search" placeholder="Hledat potravinu…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button id="search-clear" class="icon-btn" aria-label="Smazat hledání">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb">
+  <button id="btn-home">Kategorie</button>
+  <span class="sep">›</span>
+  <span class="cur" id="breadcrumb-cat"></span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="content">
+  <!-- HOME: categories + favorites -->
+  <div id="home-view">
+    <div id="favs-section" style="display:none">
+      <div class="section-label">⭐ Oblíbené</div>
+      <div id="fav-grid" class="food-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px"></div>
+    </div>
+    <div class="section-label">Kategorie</div>
+    <div id="cat-grid"></div>
+  </div>
+
+  <!-- FOOD LIST in category -->
+  <div id="food-view" style="display:none">
+    <div id="food-grid"></div>
+  </div>
+
+  <!-- SEARCH RESULTS -->
+  <div id="search-results">
+    <div class="section-label">Výsledky hledání</div>
+    <div id="results-grid" class="food-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
+    <div id="results-empty" class="empty-state" style="display:none">
+      <span class="emoji">🔍</span>Nenalezeno. Zkus jiné slovo.
+    </div>
+  </div>
+</div>
+
+<!-- CART BAR -->
+<div id="cart-bar">
+  <div>
+    <div id="cart-label">Celkem sacharidů</div>
+    <div>
+      <span id="cart-total">0</span><span id="cart-unit"> g</span>
+      <span id="cart-items-count">0 jídel</span>
+    </div>
+  </div>
+  <div id="cart-btns">
+    <button id="btn-cart-view">Detail</button>
+    <button id="btn-cart-clear">Smazat</button>
+  </div>
+</div>
+
+<!-- ── NUMPAD OVERLAY ── -->
+<div class="overlay" id="numpad-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div id="numpad-food-name"></div>
+    <div id="numpad-carbs-info"></div>
+    <div id="gram-display">
+      <span id="gram-value">0</span>
+      <span id="gram-unit">g</span>
+      <div id="result-preview">
+        <div id="result-g">0 g</div>
+        <div id="result-label">sacharidů</div>
+      </div>
+    </div>
+    <div class="preset-row" id="preset-row">
+      <button class="preset-btn" data-g="30">30 g</button>
+      <button class="preset-btn" data-g="50">50 g</button>
+      <button class="preset-btn" data-g="100">100 g</button>
+      <button class="preset-btn" data-g="150">150 g</button>
+      <button class="preset-btn" data-g="200">200 g</button>
+    </div>
+    <div id="numpad-grid">
+      <button class="num-btn" data-n="1">1</button>
+      <button class="num-btn" data-n="2">2</button>
+      <button class="num-btn" data-n="3">3</button>
+      <button class="num-btn" data-n="4">4</button>
+      <button class="num-btn" data-n="5">5</button>
+      <button class="num-btn" data-n="6">6</button>
+      <button class="num-btn" data-n="7">7</button>
+      <button class="num-btn" data-n="8">8</button>
+      <button class="num-btn" data-n="9">9</button>
+      <button class="num-btn acc" data-n=".">.</button>
+      <button class="num-btn" data-n="0">0</button>
+      <button class="num-btn del" id="btn-del">⌫</button>
+      <button class="num-btn action wide" id="btn-add-cart">+ Přidat do součtu</button>
+      <button class="num-btn action" id="btn-numpad-close" style="background:var(--surface2);color:var(--text2);">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CART SHEET OVERLAY ── -->
+<div class="overlay" id="cart-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Součet jídel</div>
+    <div class="sheet-sub" id="cart-sheet-sub"></div>
+    <div id="cart-list"></div>
+    <div class="cart-total-row">
+      <div class="cart-total-label">Celkem sacharidů</div>
+      <div><span class="cart-total-val" id="cart-total-sheet">0</span> g</div>
+    </div>
+    <button id="btn-cart-close-sheet">Zavřít</button>
+  </div>
+</div>
+
+<!-- ── SETTINGS OVERLAY ── -->
+<div class="overlay" id="settings-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Nastavení</div>
+
+    <div class="settings-section">
+      <div class="settings-title">Vzhled</div>
+      <div class="settings-row">
+        <div class="settings-row-icon">🎨</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Motiv</div>
+        </div>
+        <div class="theme-toggle">
+          <button class="theme-opt" data-theme="light">☀️</button>
+          <button class="theme-opt active" data-theme="system">Auto</button>
+          <button class="theme-opt" data-theme="dark">🌙</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">Data – seznam potravin</div>
+      <div class="settings-row">
+        <div class="settings-row-icon">📋</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Aktuální seznam</div>
+          <div class="settings-row-sub" id="data-source-label">Výchozí seznam (182 potravin)</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-icon">📥</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Nahrát vlastní Excel</div>
+          <div class="settings-row-sub">Sloupce: A=Název, B=Sacharidy/100g, C=Kategorie</div>
+        </div>
+        <button class="settings-btn" id="btn-upload">Nahrát</button>
+      </div>
+      <div class="settings-row" id="row-reset" style="display:none">
+        <div class="settings-row-icon">🔄</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Obnovit výchozí seznam</div>
+        </div>
+        <button class="settings-btn" id="btn-reset" style="color:var(--danger)">Obnovit</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">Jak nahrát vlastní Excel?</div>
+      <div class="info-block">
+        <h3>Formát souboru (.xlsx nebo .csv)</h3>
+        <ul>
+          <li>Sloupec <code>A</code> — Název potraviny</li>
+          <li>Sloupec <code>B</code> — Sacharidy na 100 g (číslo)</li>
+          <li>Sloupec <code>C</code> — Kategorie (např. pečivo, ovoce a zelenina…)</li>
+          <li>Bez záhlaví v prvním řádku, nebo záhlaví přeskočíme automaticky</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Jak nainstalovat na telefon?</h3>
+        <ul>
+          <li><b>Android:</b> otevři v Chrome → menu ⋮ → „Přidat na plochu"</li>
+          <li><b>iPhone:</b> otevři v Safari → ikona sdílení → „Přidat na plochu"</li>
+          <li>Aplikace pak běží ve fullscreen bez adresního řádku</li>
+        </ul>
+      </div>
+    </div>
+
+    <button id="btn-settings-close" style="width:100%;padding:14px;background:var(--surface2);border-radius:var(--r);font-size:1rem;font-weight:800;color:var(--text);margin-top:4px;">Zavřít</button>
+  </div>
+</div>
+
+<!-- hidden file input -->
+<input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════════════ */
+const DEFAULT_DATA = [
+["Bageta (kornbageta)",50,"pečivo"],
+["Bageta celozrná",42.3,"pečivo"],
+["Bageta cereální",46,"pečivo"],
+["Bageta cibulová",55.3,"pečivo"],
+["Bageta česneková",42,"pečivo"],
+["Bageta dřevorubecká",45,"pečivo"],
+["Bageta fitness",50,"pečivo"],
+["Bageta francouzská",44,"pečivo"],
+["Bageta Korn",49,"pečivo"],
+["Bageta malá tmavá",50,"pečivo"],
+["Bageta multicereální",49,"pečivo"],
+["Bageta párty véčka",43,"pečivo"],
+["Bageta podmáslová",46,"pečivo"],
+["Bageta rustikální s kvasem",56,"pečivo"],
+["Bageta rustikální s pohankou",50,"pečivo"],
+["Bageta sedmizrnná",50,"pečivo"],
+["Bageta světlá",44,"pečivo"],
+["Bageta venkovská",51,"pečivo"],
+["Bagetka cereální",52,"pečivo"],
+["Bandur celozrnný slunečnicový",42.9,"pečivo"],
+["Bulka dýňová",50,"pečivo"],
+["Bulka fitness",49,"pečivo"],
+["Bulka sýrová Gouda",45,"pečivo"],
+["Croissant fit",34,"pečivo"],
+["Croissant vaječný likér",48,"pečivo"],
+["Dalamánek Pistolet s posypem",45,"pečivo"],
+["Dalamánek s kmínem",46,"pečivo"],
+["Houska cereální",45,"pečivo"],
+["Houska pekařova pšeničná",55,"pečivo"],
+["Houska ražená hladká",51,"pečivo"],
+["Houska raženka",60,"pečivo"],
+["Houska s mákem",40,"pečivo"],
+["Houska staročeská s mákem",40,"pečivo"],
+["Houska tyger",47,"pečivo"],
+["Chleba",45,"pečivo"],
+["Chleba pšenično žitný",41.5,"pečivo"],
+["Chleba bramborový s cibulkou",51,"pečivo"],
+["Chleba celožitný kváskový",41,"pečivo"],
+["Chleba cibulový",48,"pečivo"],
+["Chleba dobrák",42,"pečivo"],
+["Chleba dřevorubecký",42,"pečivo"],
+["Chleba dýňový",41.2,"pečivo"],
+["Chleba dýňový Albert",33,"pečivo"],
+["Chleba himálajský",43,"pečivo"],
+["Chleba horal",54,"pečivo"],
+["Chleba horský",49,"pečivo"],
+["Chleba kovář",54,"pečivo"],
+["Chleba Kovářův pšenično žitný",47,"pečivo"],
+["Chleba kulatý se zářezy",50,"pečivo"],
+["Chleba kváskový",50,"pečivo"],
+["Chleba lámankový",42,"pečivo"],
+["Chleba mistrovský",38,"pečivo"],
+["Chleba multicereální",45.8,"pečivo"],
+["Chleba pekářův bochník",52,"pečivo"],
+["Chleba pětizrnný",44,"pečivo"],
+["Chleba podmáslový",39,"pečivo"],
+["Chleba řemeslný pecen",45,"pečivo"],
+["Chleba s chia semínky",47,"pečivo"],
+["Chleba sedlácký",39,"pečivo"],
+["Chleba sedlácký se záparou",40,"pečivo"],
+["Chleba slunečnicový",40,"pečivo"],
+["Chleba škvarkový",45,"pečivo"],
+["Chleba Šumava",48,"pečivo"],
+["Chleba venkovský",49,"pečivo"],
+["Chleba vesnický z kamenné pece",52,"pečivo"],
+["Chleba víkendový",50,"pečivo"],
+["Chleba zemský s kváskem",50,"pečivo"],
+["Chleba Zlatý klas",43,"pečivo"],
+["Chleba žitný",42,"pečivo"],
+["Kaiserka len sezam",48,"pečivo"],
+["Kaiserka multicereální",43,"pečivo"],
+["Kaiserka natural",46.9,"pečivo"],
+["Kaiserka s mákem",54,"pečivo"],
+["Kaiserka speciál",48.4,"pečivo"],
+["Mazanec",55,"pečivo"],
+["Párty véčka",43,"pečivo"],
+["Pletýnka bílá mix",54,"pečivo"],
+["Pletýnka sypaná mákem",55,"pečivo"],
+["Rohlík",50,"pečivo"],
+["Rohlík celozrnný",38.6,"pečivo"],
+["Rohlík cereální",57,"pečivo"],
+["Rohlík císařský",57,"pečivo"],
+["Rohlík hladký",51,"pečivo"],
+["Rohlík junior",50,"pečivo"],
+["Rohlík Mlynářský žitný",39,"pečivo"],
+["Rohlík pivní",55,"pečivo"],
+["Rohlík prémium zlatý",54,"pečivo"],
+["Rohlík s posypem solí a kmínem",51,"pečivo"],
+["Rohlík sedmizrnný",55,"pečivo"],
+["Rohlík selský",55,"pečivo"],
+["Rohlík sojový",57.5,"pečivo"],
+["Rohlík staročeský s mákem",40,"pečivo"],
+["Rohlík sýrový",40,"pečivo"],
+["Rohlík zlato",51,"pečivo"],
+["Rohlík žitný",42,"pečivo"],
+["Tousty",51,"pečivo"],
+["Vánočka",60,"pečivo"],
+["Veka",60,"pečivo"],
+["Veka tyger",60,"pečivo"],
+["Velák mlynářský",39,"pečivo"],
+["Americké brambory v troubě",23,"hotové jídlo"],
+["Bramborová kaše",16,"hotové jídlo"],
+["Bramborové placky",15,"hotové jídlo"],
+["Bramborový knedlík",30,"hotové jídlo"],
+["Bramborový salát",14,"hotové jídlo"],
+["Brambory vařené",19,"hotové jídlo"],
+["Dukátové buchtičky",35.6,"hotové jídlo"],
+["Bulgur",19,"hotové jídlo"],
+["Čočka vařená",13,"hotové jídlo"],
+["Hranolky",21,"hotové jídlo"],
+["Houskový knedlík",40,"hotové jídlo"],
+["Krokety bramborové smažené",23,"hotové jídlo"],
+["Kuskus",29,"hotové jídlo"],
+["Langoš",45,"hotové jídlo"],
+["Listové těsto",33,"hotové jídlo"],
+["Noky bramborové",15,"hotové jídlo"],
+["Nudle s mákem",21,"hotové jídlo"],
+["Pizza Salame e Chorizo",34,"hotové jídlo"],
+["Pizza Casa di Mama",27,"hotové jídlo"],
+["Pizza Don Peppe salámová",29.7,"hotové jídlo"],
+["Pizza Feliciana",33,"hotové jídlo"],
+["Pizza 4 sýry",32,"hotové jídlo"],
+["Pizza Prosciutto e Mozzarella",25.5,"hotové jídlo"],
+["Pizza Quattro Formaggi",30.3,"hotové jídlo"],
+["Pizza Originale salámová",29,"hotové jídlo"],
+["Pizza Originale speciale",33,"hotové jídlo"],
+["Pizza salámová",26,"hotové jídlo"],
+["Pizza Edel-Salami",30,"hotové jídlo"],
+["Pizza špenátová Ristorante",21,"hotové jídlo"],
+["Pizza s sýrovým okrajem",30.6,"hotové jídlo"],
+["Rýže vařená",15,"hotové jídlo"],
+["Šoulet",20,"hotové jídlo"],
+["Špagety vařené",23,"hotové jídlo"],
+["Špecle",28,"hotové jídlo"],
+["Štrůdl domácí",22,"hotové jídlo"],
+["Těstovinový salát",17,"hotové jídlo"],
+["Těstoviny vařené",20,"hotové jídlo"],
+["Těstoviny motýlci",18,"hotové jídlo"],
+["Těstoviny penne",32,"hotové jídlo"],
+["Zapečené těstoviny",8,"hotové jídlo"],
+["Žemlovka",18,"hotové jídlo"],
+["Banán",16,"ovoce a zelenina"],
+["Hroznové víno",17,"ovoce a zelenina"],
+["Jablko",13,"ovoce a zelenina"],
+["Jahody",6,"ovoce a zelenina"],
+["Kiwi",14,"ovoce a zelenina"],
+["Mandarinka",12,"ovoce a zelenina"],
+["Mrkev",8,"ovoce a zelenina"],
+["Bábovka domácí",50,"koláče"],
+["Bábovka na plechu",35,"koláče"],
+["Bábovka tvarohová domácí",40,"koláče"],
+["Bábovka tvarohová jablková",50,"koláče"],
+["Bublanina s rybízem",36,"koláče"],
+["Donut",42,"koláče"],
+["Duetka s jahodami a pudinkem",40.4,"koláče"],
+["Frgál makový",52,"koláče"],
+["Frgál meruňkový",45,"koláče"],
+["Frgál s borůvkami",38,"koláče"],
+["Frgál tvarohový",45,"koláče"],
+["Hřeben listový makový",36,"koláče"],
+["Hřeben s makovou náplní",57,"koláče"],
+["Jablečný koláč s pudinkem",24,"koláče"],
+["Jablečný závin",31,"koláče"],
+["Koláč Hlučínský tvarohový",52,"koláče"],
+["Koláč máslový mákový",51,"koláče"],
+["Koláč máslový tvarohový",42,"koláče"],
+["Koláč sváteční tvarohový",45,"koláče"],
+["Koláč sváteční makový",52,"koláče"],
+["Koláč tvarohový s borůvkami",40,"koláče"],
+["Linecké domácí",28,"koláče"],
+["Listový šáteček s náplní",45,"koláče"],
+["Makovec",55,"koláče"],
+["Motýlek s tvarohem",50,"koláče"],
+["Mřížka pudink jahoda",35,"koláče"],
+["Palačinky s džemem",38,"koláče"],
+["Perník domácí",35,"koláče"],
+["Sypaný koláč s tvarohem",41,"koláče"],
+["Šáteček malinový",36,"koláče"],
+["Šáteček meruňkový",45,"koláče"],
+["Šáteček s pudinkem",31,"koláče"],
+["Šáteček s višňovou náplní",36,"koláče"],
+["Šáteček tvarohový",46.9,"koláče"],
+["Šneci z listového těsta",39,"koláče"],
+["Věneček s krémem",23,"koláče"],
+["Závin domácí",27,"koláče"],
+["Bebe sušenky",67,"sladkosti"],
+["Bebe Dobré ráno",64,"sladkosti"],
+["Havlíkovy tyčinky",66.8,"sladkosti"],
+["Chipsy Bacon",58,"sladkosti"],
+["Máčené sušenky",60,"sladkosti"],
+["Trubičky oplatky",26,"sladkosti"],
+];
+
+const CAT_META = {
+  "pečivo":          { icon: "🥖", order: 0 },
+  "hotové jídlo":    { icon: "🍽️", order: 1 },
+  "ovoce a zelenina":{ icon: "🥦", order: 2 },
+  "koláče":          { icon: "🎂", order: 3 },
+  "sladkosti":       { icon: "🍫", order: 4 },
+};
+function catMeta(cat) {
+  const k = cat.toLowerCase();
+  return CAT_META[k] || { icon: "🍴", order: 99 };
+}
+
+/* ════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════ */
+let foods = [];          // [{name, carbs, cat}]
+let favorites = new Set();
+let cart = [];           // [{name, carbs, grams, total}]
+let currentCat = null;
+let activeFood = null;
+let gramStr = "0";
+let isCustomData = false;
+
+/* ════════════════════════════════════════════════════════
+   STORAGE
+════════════════════════════════════════════════════════ */
+function saveState() {
+  try {
+    localStorage.setItem('sach_favs', JSON.stringify([...favorites]));
+    localStorage.setItem('sach_cart', JSON.stringify(cart));
+    if (isCustomData) localStorage.setItem('sach_custom', JSON.stringify(foods));
+    else localStorage.removeItem('sach_custom');
+    localStorage.setItem('sach_custom_flag', isCustomData ? '1' : '0');
+  } catch(e) {}
+}
+function loadState() {
+  try {
+    const f = localStorage.getItem('sach_favs');
+    if (f) favorites = new Set(JSON.parse(f));
+    const c = localStorage.getItem('sach_cart');
+    if (c) cart = JSON.parse(c);
+    const flag = localStorage.getItem('sach_custom_flag');
+    if (flag === '1') {
+      const d = localStorage.getItem('sach_custom');
+      if (d) { foods = JSON.parse(d); isCustomData = true; }
+      else { foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]})); }
+    } else {
+      foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+    }
+  } catch(e) {
+    foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   THEME
+════════════════════════════════════════════════════════ */
+function applyTheme(t) {
+  if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('.theme-opt').forEach(b=>{
+    b.classList.toggle('active', b.dataset.theme === t);
+  });
+  try { localStorage.setItem('sach_theme', t); } catch(e){}
+}
+function loadTheme() {
+  try { applyTheme(localStorage.getItem('sach_theme') || 'system'); }
+  catch(e) { applyTheme('system'); }
+}
+
+/* ════════════════════════════════════════════════════════
+   CATEGORIES
+════════════════════════════════════════════════════════ */
+function getCategories() {
+  const counts = {};
+  foods.forEach(f => {
+    const k = f.cat.toLowerCase();
+    counts[k] = (counts[k]||0) + 1;
+  });
+  return Object.entries(counts)
+    .map(([k,n]) => ({ name: k, count: n, ...catMeta(k) }))
+    .sort((a,b) => a.order - b.order || a.name.localeCompare(b.name,'cs'));
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER: HOME
+════════════════════════════════════════════════════════ */
+function renderHome() {
+  // Favorites
+  const favFoods = foods.filter(f => favorites.has(f.name));
+  const favsSection = document.getElementById('favs-section');
+  const favGrid = document.getElementById('fav-grid');
+  favsSection.style.display = favFoods.length ? '' : 'none';
+  favGrid.innerHTML = favFoods.map(f => foodTileHTML(f)).join('');
+
+  // Categories
+  const cats = getCategories();
+  document.getElementById('cat-grid').innerHTML = cats.map(c => `
+    <button class="cat-tile" data-cat="${esc(c.name)}">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-name">${esc(capitalize(c.name))}</span>
+      <span class="cat-count">${c.count} potravin</span>
+    </button>
+  `).join('');
+  bindFoodTileEvents(favGrid);
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER: FOOD GRID
+════════════════════════════════════════════════════════ */
+function foodTileHTML(f) {
+  const isFav = favorites.has(f.name);
+  return `
+    <button class="food-tile" data-name="${esc(f.name)}">
+      <span class="food-name">${esc(f.name)}</span>
+      <span class="food-carbs">${f.carbs} g / 100 g</span>
+      <span class="fav-star${isFav?' active':''}" data-fav="${esc(f.name)}">★</span>
+    </button>
+  `;
+}
+
+function renderFoodGrid(cat) {
+  currentCat = cat;
+  const list = foods.filter(f => f.cat.toLowerCase() === cat.toLowerCase());
+  document.getElementById('food-grid').innerHTML = list.map(f => foodTileHTML(f)).join('');
+  showView('food');
+  document.getElementById('breadcrumb-cat').textContent = capitalize(cat);
+  document.getElementById('breadcrumb').classList.add('visible');
+  bindFoodTileEvents(document.getElementById('food-grid'));
+}
+
+function bindFoodTileEvents(container) {
+  container.querySelectorAll('.food-tile').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const star = e.target.closest('.fav-star');
+      if (star) { toggleFav(star.dataset.fav); return; }
+      const name = btn.dataset.name;
+      const food = foods.find(f => f.name === name);
+      if (food) openNumpad(food);
+    });
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   VIEWS
+════════════════════════════════════════════════════════ */
+function showView(v) {
+  document.getElementById('home-view').style.display = v==='home' ? '' : 'none';
+  document.getElementById('food-view').style.display = v==='food' ? '' : 'none';
+  document.getElementById('search-results').classList.toggle('visible', v==='search');
+  if (v !== 'food') {
+    document.getElementById('breadcrumb').classList.remove('visible');
+    currentCat = null;
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   FAVORITES
+════════════════════════════════════════════════════════ */
+function toggleFav(name) {
+  if (favorites.has(name)) favorites.delete(name);
+  else favorites.add(name);
+  saveState();
+  // update stars in current view
+  document.querySelectorAll(`.fav-star[data-fav="${CSS.escape(name)}"]`).forEach(s => {
+    s.classList.toggle('active', favorites.has(name));
+  });
+  renderHome(); // update fav row
+}
+
+/* ════════════════════════════════════════════════════════
+   NUMPAD
+════════════════════════════════════════════════════════ */
+function openNumpad(food) {
+  activeFood = food;
+  gramStr = "0";
+  document.getElementById('numpad-food-name').textContent = food.name;
+  document.getElementById('numpad-carbs-info').textContent = `${food.carbs} g sacharidů na 100 g`;
+  updateGramDisplay();
+  openOverlay('numpad-overlay');
+}
+
+function updateGramDisplay() {
+  const g = parseFloat(gramStr) || 0;
+  document.getElementById('gram-value').textContent = gramStr === "0" ? "0" : gramStr;
+  const sach = activeFood ? Math.round(g * activeFood.carbs / 100 * 10) / 10 : 0;
+  document.getElementById('result-g').textContent = sach + ' g';
+}
+
+document.getElementById('numpad-grid').addEventListener('click', e => {
+  const btn = e.target.closest('.num-btn');
+  if (!btn) return;
+  if (btn.id === 'btn-del') {
+    gramStr = gramStr.length > 1 ? gramStr.slice(0,-1) : "0";
+  } else if (btn.id === 'btn-add-cart') {
+    addToCart(); return;
+  } else if (btn.id === 'btn-numpad-close') {
+    closeOverlay('numpad-overlay'); return;
+  } else if (btn.dataset.n !== undefined) {
+    const n = btn.dataset.n;
+    if (n === '.') {
+      if (!gramStr.includes('.')) gramStr += '.';
+    } else {
+      if (gramStr === "0") gramStr = n;
+      else if (gramStr.length < 6) gramStr += n;
+    }
+  }
+  updateGramDisplay();
+});
+
+document.getElementById('preset-row').addEventListener('click', e => {
+  const btn = e.target.closest('.preset-btn');
+  if (!btn) return;
+  gramStr = btn.dataset.g;
+  updateGramDisplay();
+});
+
+function addToCart() {
+  const g = parseFloat(gramStr) || 0;
+  if (g <= 0 || !activeFood) { showToast('Zadej váhu v gramech'); return; }
+  const sach = Math.round(g * activeFood.carbs / 100 * 10) / 10;
+  cart.push({ name: activeFood.name, carbs: activeFood.carbs, grams: g, total: sach });
+  saveState();
+  updateCartBar();
+  closeOverlay('numpad-overlay');
+  showToast(`Přidáno: ${sach} g sacharidů`);
+}
+
+/* ════════════════════════════════════════════════════════
+   CART
+════════════════════════════════════════════════════════ */
+function cartSum() { return Math.round(cart.reduce((s,i)=>s+i.total,0)*10)/10; }
+
+function updateCartBar() {
+  const bar = document.getElementById('cart-bar');
+  if (cart.length === 0) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  document.getElementById('cart-total').textContent = cartSum();
+  document.getElementById('cart-items-count').textContent = cart.length + (cart.length===1?' jídlo':cart.length<5?' jídla':' jídel');
+}
+
+function renderCartSheet() {
+  const list = document.getElementById('cart-list');
+  list.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div>
+        <div class="cart-item-name">${esc(item.name)}</div>
+        <div class="cart-item-detail">${item.grams} g · ${item.carbs} g/100g</div>
+      </div>
+      <div class="cart-item-carbs">${item.total} g</div>
+      <button class="cart-item-del" data-i="${i}" aria-label="Odebrat">✕</button>
+    </div>
+  `).join('');
+  document.getElementById('cart-total-sheet').textContent = cartSum();
+  document.getElementById('cart-sheet-sub').textContent = `${cart.length} položek`;
+  list.querySelectorAll('.cart-item-del').forEach(b => {
+    b.addEventListener('click', () => {
+      cart.splice(+b.dataset.i, 1);
+      saveState(); updateCartBar(); renderCartSheet();
+    });
+  });
+}
+
+/* ════════════════════════════════════════════════════════
+   SEARCH
+════════════════════════════════════════════════════════ */
+let searchTimer;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => doSearch(e.target.value.trim()), 120);
+  document.getElementById('search-clear').classList.toggle('visible', !!e.target.value);
+});
+
+document.getElementById('search-clear').addEventListener('click', () => {
+  document.getElementById('search').value = '';
+  document.getElementById('search-clear').classList.remove('visible');
+  showView('home');
+  renderHome();
+});
+
+function doSearch(q) {
+  if (!q) { showView('home'); renderHome(); return; }
+  showView('search');
+  const low = q.toLowerCase();
+  const results = foods.filter(f => f.name.toLowerCase().includes(low));
+  const grid = document.getElementById('results-grid');
+  const empty = document.getElementById('results-empty');
+  grid.innerHTML = results.map(f => foodTileHTML(f)).join('');
+  empty.style.display = results.length ? 'none' : '';
+  bindFoodTileEvents(grid);
+}
+
+/* ════════════════════════════════════════════════════════
+   EXCEL / CSV IMPORT
+════════════════════════════════════════════════════════ */
+document.getElementById('btn-upload').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const wb = XLSX.read(ev.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      const parsed = [];
+      rows.forEach(row => {
+        const name = String(row[0]||'').trim();
+        const carbs = parseFloat(String(row[1]||'').replace(',','.'));
+        const cat = String(row[2]||'ostatní').trim().toLowerCase();
+        if (name && !isNaN(carbs)) parsed.push({ name, carbs, cat });
+      });
+      if (parsed.length === 0) { showToast('Soubor neobsahuje platná data'); return; }
+      foods = parsed;
+      isCustomData = true;
+      saveState();
+      updateDataSourceLabel();
+      renderHome();
+      closeOverlay('settings-overlay');
+      showToast(`Načteno ${parsed.length} potravin ✓`);
+      document.getElementById('row-reset').style.display = '';
+    } catch(err) {
+      showToast('Chyba při čtení souboru');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  e.target.value = '';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+  isCustomData = false;
+  saveState();
+  updateDataSourceLabel();
+  renderHome();
+  document.getElementById('row-reset').style.display = 'none';
+  showToast('Obnoven výchozí seznam');
+});
+
+function updateDataSourceLabel() {
+  document.getElementById('data-source-label').textContent =
+    isCustomData ? `Vlastní seznam (${foods.length} potravin)` : `Výchozí seznam (${foods.length} potravin)`;
+  document.getElementById('row-reset').style.display = isCustomData ? '' : 'none';
+}
+
+/* ════════════════════════════════════════════════════════
+   OVERLAYS
+════════════════════════════════════════════════════════ */
+function openOverlay(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => {
+    if (e.target === ov) closeOverlay(ov.id);
+  });
+});
+
+/* ════════════════════════════════════════════════════════
+   EVENT BINDINGS
+════════════════════════════════════════════════════════ */
+// Category tiles
+document.getElementById('cat-grid').addEventListener('click', e => {
+  const tile = e.target.closest('.cat-tile');
+  if (tile) renderFoodGrid(tile.dataset.cat);
+});
+
+// Breadcrumb back
+document.getElementById('btn-home').addEventListener('click', () => {
+  showView('home');
+  renderHome();
+});
+
+// Cart bar
+document.getElementById('btn-cart').addEventListener('click', () => {
+  renderCartSheet(); openOverlay('cart-overlay');
+});
+document.getElementById('btn-cart-view').addEventListener('click', () => {
+  renderCartSheet(); openOverlay('cart-overlay');
+});
+document.getElementById('btn-cart-clear').addEventListener('click', () => {
+  cart = []; saveState(); updateCartBar(); showToast('Součet vymazán');
+});
+document.getElementById('btn-cart-close-sheet').addEventListener('click', () => {
+  closeOverlay('cart-overlay');
+});
+
+// Settings
+document.getElementById('btn-settings').addEventListener('click', () => {
+  updateDataSourceLabel();
+  openOverlay('settings-overlay');
+});
+document.getElementById('btn-settings-close').addEventListener('click', () => {
+  closeOverlay('settings-overlay');
+});
+
+// Theme
+document.querySelectorAll('.theme-opt').forEach(b => {
+  b.addEventListener('click', () => applyTheme(b.dataset.theme));
+});
+
+/* ════════════════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════ */
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
+loadTheme();
+loadState();
+updateDataSourceLabel();
+renderHome();
+updateCartBar();
+
+// Service Worker registration (for PWA offline)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
