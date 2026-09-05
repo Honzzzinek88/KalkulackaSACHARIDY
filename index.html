@@ -235,7 +235,7 @@ input { font-family: inherit; }
 /* ── SHOP COLORS ────────────────────────────────────────── */
 .shop-kaufland  { border-color: #E40521 !important; }
 .shop-albert    { border-color: #5BB8E8 !important; }
-.shop-globus    { border-color: #C8A800 !important; }
+.shop-globus    { border-color: #FF6600 !important; }
 .shop-hruska    { border-color: #00853E !important; }
 .shop-lidl      { border-color: #FFD700 !important; }
 .shop-tesco     { border-color: #888888 !important; }
@@ -256,7 +256,7 @@ input { font-family: inherit; }
 }
 .shop-kaufland .shop-badge  { background: #E40521; color: #fff; }
 .shop-albert .shop-badge    { background: #5BB8E8; color: #fff; }
-.shop-globus .shop-badge    { background: #C8A800; color: #fff; }
+.shop-globus .shop-badge    { background: #FF6600; color: #fff; }
 .shop-hruska .shop-badge    { background: #00853E; color: #fff; }
 .shop-lidl .shop-badge      { background: #FFD700; color: #333; }
 .shop-tesco .shop-badge     { background: #888888; color: #fff; }
@@ -301,9 +301,9 @@ input { font-family: inherit; }
 }
 .food-tile-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
 }
 .fav-star {
@@ -857,10 +857,22 @@ code {
       <div class="info-block">
         <h3>Jak nainstalovat na telefon?</h3>
         <ul>
-          <li><b>Android:</b> otevři v Chrome → menu ⋮ → „Přidat na plochu"</li>
-          <li><b>iPhone:</b> otevři v Safari → ikona sdílení → „Přidat na plochu"</li>
+          <li><b>Android Chrome:</b> klikni na tlačítko níže nebo menu ⋮ → „Přidat na plochu"</li>
+          <li><b>iPhone Safari:</b> ikona sdílení → „Přidat na plochu"</li>
           <li>Aplikace pak běží ve fullscreen bez adresního řádku</li>
         </ul>
+      </div>
+    </div>
+
+    <div class="settings-section" id="install-section" style="display:none">
+      <div class="settings-title">Instalace</div>
+      <div class="settings-row">
+        <div class="settings-row-icon">📲</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Nainstalovat aplikaci</div>
+          <div class="settings-row-sub">Přidat na plochu telefonu / počítače</div>
+        </div>
+        <button class="settings-btn" id="btn-install" style="background:var(--accent);color:#fff;">Instalovat</button>
       </div>
     </div>
 
@@ -1197,18 +1209,22 @@ function renderHome() {
 /* ════════════════════════════════════════════════════════
    RENDER: FOOD GRID
 ════════════════════════════════════════════════════════ */
+function capitalize(s) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 function foodTileHTML(f) {
   const isFav = favorites.has(f.name);
   const sc = shopClass(f.shop || '');
-  const shopBadge = f.shop ? `<span class="shop-badge">${esc(f.shop)}</span>` : '';
+  const shopBadge = f.shop ? `<span class="shop-badge">${esc(capitalize(f.shop.toLowerCase()))}</span>` : '';
   return `
     <button class="food-tile${sc?' '+sc:''}" data-name="${esc(f.name)}">
       <div class="food-tile-info">
-        <span class="food-name">${esc(f.name)}</span>
+        <span class="food-name">${esc(capitalize(f.name))}</span>
         <span class="food-carbs">${f.carbs} g / 100 g</span>
-        ${shopBadge}
       </div>
       <div class="food-tile-right">
+        ${shopBadge}
         <span class="fav-star${isFav?' active':''}" data-fav="${esc(f.name)}">★</span>
       </div>
     </button>
@@ -1583,6 +1599,28 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   });
 }
+
+// PWA Install prompt
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // Zobraz sekci instalace v nastavení
+  const sec = document.getElementById('install-section');
+  if (sec) sec.style.display = '';
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const sec = document.getElementById('install-section');
+  if (sec) sec.style.display = 'none';
+  showToast('Aplikace nainstalována ✓');
+});
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'btn-install' && deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(() => { deferredInstallPrompt = null; });
+  }
+});
 </script>
 </body>
 </html>
