@@ -2,9 +2,9 @@
   "name": "Sacharidy kalkulačka",
   "short_name": "Sacharidy",
   "description": "Kalkulačka sacharidů pro diabetiky",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#F0F7F5",
+  "background_color": "#1B7A5E",
   "theme_color": "#1B7A5E",
   "orientation": "portrait",
   "icons": [
