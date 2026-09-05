@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto+Mono:wght@500;700&display=swap">
 <style>
 /* ── TOKENS ─────────────────────────────────────────────── */
+/* Základní CSS proměnné — přepísány podle zvoleného tématu */
+
+/* ═══ KLASICKÉ DENNÍ (výchozí) ═══ */
 :root {
   --bg:        #F0F7F5;
   --surface:   #FFFFFF;
@@ -42,36 +45,15 @@
   --r: 16px;
   --r-sm: 10px;
   --transition: .18s cubic-bezier(.4,0,.2,1);
+  --font-primary: 'Nunito', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --logo-weight: 900;
+  --logo-letter-spacing: -.5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg:        #0A1E28;
-    --surface:   #132530;
-    --surface2:  #1A3040;
-    --border:    #2A4858;
-    --text:      #E8F4F0;
-    --text2:     #7AABB8;
-    --accent:    #2ABFA0;
-    --accent-lt: #1B7A5E;
-    --accent-dk: #3DD4B6;
-    --tile-bg:   #132530;
-    --tile-sh:   0 2px 8px rgba(0,0,0,.35);
-    --tile-sh-h: 0 4px 18px rgba(0,0,0,.50);
-    --fav:       #F0B429;
-    --result-bg: #1B6E54;
-    --num-bg:    #132530;
-    --num-tx:    #E8F4F0;
-    --num-acc:   #2ABFA0;
-    --num-acc-tx:#0A1E28;
-    --num-del:   #E74C3C;
-    --num-del-tx:#FFFFFF;
-    --sheet-bg:  #132530;
-    --overlay:   rgba(0,0,0,.72);
-  }
-}
-
-:root[data-theme="dark"] {
+/* ═══ KLASICKÉ NOČNÍ ═══ */
+:root[data-style="klasicke"][data-mode="nocni"],
+[data-style="klasicke"][data-mode="nocni"] body {
   --bg:        #0A1E28;
   --surface:   #132530;
   --surface2:  #1A3040;
@@ -96,11 +78,80 @@
   --overlay:   rgba(0,0,0,.72);
 }
 
+/* ═══ TESLA DENNÍ ═══ */
+:root[data-style="tesla"][data-mode="denni"] {
+  --bg:        #F4F4F4;
+  --surface:   #FFFFFF;
+  --surface2:  #EEEEEE;
+  --border:    #D0D1D2;
+  --text:      #171A20;
+  --text2:     #5C5E62;
+  --accent:    #3E6AE1;
+  --accent-lt: #B8CAFA;
+  --accent-dk: #2A52C4;
+  --tile-bg:   #FFFFFF;
+  --tile-sh:   none;
+  --tile-sh-h: none;
+  --fav:       #E8A020;
+  --danger:    #CC0000;
+  --result-bg: #171A20;
+  --result-tx: #FFFFFF;
+  --overlay:   rgba(23,26,32,.55);
+  --num-bg:    #F4F4F4;
+  --num-tx:    #171A20;
+  --num-acc:   #3E6AE1;
+  --num-acc-tx:#FFFFFF;
+  --num-del:   #CC0000;
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  #FFFFFF;
+  --r: 4px;
+  --r-sm: 4px;
+  --font-primary: -apple-system, Arial, sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --logo-weight: 500;
+  --logo-letter-spacing: 0;
+}
+
+/* ═══ TESLA NOČNÍ ═══ */
+:root[data-style="tesla"][data-mode="nocni"] {
+  --bg:        #171A20;
+  --surface:   #1F2329;
+  --surface2:  #292D35;
+  --border:    #393C41;
+  --text:      #F4F4F4;
+  --text2:     #8E8E8E;
+  --accent:    #3E6AE1;
+  --accent-lt: #293A6A;
+  --accent-dk: #6B8EEA;
+  --tile-bg:   #1F2329;
+  --tile-sh:   none;
+  --tile-sh-h: none;
+  --fav:       #F0B429;
+  --danger:    #E74C3C;
+  --result-bg: #292D35;
+  --result-tx: #F4F4F4;
+  --overlay:   rgba(0,0,0,.80);
+  --num-bg:    #1F2329;
+  --num-tx:    #F4F4F4;
+  --num-acc:   #3E6AE1;
+  --num-acc-tx:#FFFFFF;
+  --num-del:   #E74C3C;
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  #1F2329;
+  --r: 4px;
+  --r-sm: 4px;
+  --font-primary: -apple-system, Arial, sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  --logo-weight: 500;
+  --logo-letter-spacing: 0;
+}
+
+
 /* ── RESET & BASE ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; -webkit-tap-highlight-color: transparent; }
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-primary, 'Nunito', sans-serif);
   background: var(--bg);
   color: var(--text);
   height: 100%;
@@ -129,9 +180,9 @@ input { font-family: inherit; }
 }
 #logo {
   font-size: 1.15rem;
-  font-weight: 900;
+  font-weight: var(--logo-weight, 900);
   color: var(--accent);
-  letter-spacing: -.5px;
+  letter-spacing: var(--logo-letter-spacing, -.5px);
   flex: 1;
   line-height: 1;
 }
@@ -576,23 +627,28 @@ input { font-family: inherit; }
   font-weight: 700;
   color: var(--accent);
 }
-/* theme toggle */
+/* theme/style/mode toggle */
 .theme-toggle {
   display: flex;
   background: var(--surface2);
   border-radius: 20px;
   padding: 3px;
   gap: 2px;
+  flex-shrink: 0;
 }
 .theme-opt {
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 16px;
-  font-size: .78rem;
+  font-size: .72rem;
   font-weight: 700;
   color: var(--text2);
   transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
 }
 .theme-opt.active { background: var(--accent); color: #fff; }
+/* Nastav settings-row na wrap pro malé obrazovky */
+.settings-row { flex-wrap: wrap; gap: 8px; }
+.settings-row .theme-toggle { margin-left: auto; }
 
 /* ── FILE INPUT HIDDEN ──────────────────────────────────── */
 #file-input { display: none; }
@@ -650,6 +706,70 @@ code {
   white-space: nowrap;
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+/* ── TESLA STYLE OVERRIDES ──────────────────────────────── */
+:root[data-style="tesla"] body {
+  font-family: var(--font-primary);
+}
+:root[data-style="tesla"] #topbar {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px 12px;
+}
+:root[data-style="tesla"] #logo span {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+:root[data-style="tesla"] .cat-tile {
+  border-radius: var(--r);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+:root[data-style="tesla"] .food-tile {
+  border-radius: var(--r);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+:root[data-style="tesla"] .food-name {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+:root[data-style="tesla"] .food-carbs {
+  color: var(--text2);
+  font-size: .78rem;
+}
+:root[data-style="tesla"] .sheet {
+  border-radius: 0;
+}
+:root[data-style="tesla"] #search {
+  border-radius: var(--r-sm);
+}
+:root[data-style="tesla"] .num-btn {
+  border-radius: var(--r-sm);
+  font-weight: 500;
+}
+:root[data-style="tesla"] .preset-btn {
+  border-radius: var(--r-sm);
+}
+:root[data-style="tesla"] #btn-cart-close-sheet,
+:root[data-style="tesla"] .settings-btn,
+:root[data-style="tesla"] #btn-settings-close {
+  border-radius: var(--r-sm);
+}
+:root[data-style="tesla"] #cart-bar {
+  background: var(--result-bg);
+  border-top: 1px solid var(--border);
+}
+:root[data-style="tesla"] .cat-name {
+  font-weight: 500;
+  font-size: .9rem;
+}
+:root[data-style="tesla"] .section-label {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: .65rem;
+}
 
 /* ── DESKTOP LAYOUT ──────────────────────────────────────── */
 @media (min-width: 640px) {
@@ -803,15 +923,28 @@ code {
 
     <div class="settings-section">
       <div class="settings-title">Vzhled</div>
+
       <div class="settings-row">
         <div class="settings-row-icon">🎨</div>
         <div class="settings-row-text">
-          <div class="settings-row-label">Motiv</div>
+          <div class="settings-row-label">Styl aplikace</div>
+          <div class="settings-row-sub" id="style-sub">Klasické</div>
         </div>
-        <div class="theme-toggle">
-          <button class="theme-opt" data-theme="light">☀️</button>
-          <button class="theme-opt active" data-theme="system">Auto</button>
-          <button class="theme-opt" data-theme="dark">🌙</button>
+        <div class="theme-toggle" id="style-toggle">
+          <button class="theme-opt active" data-style="klasicke">🟢 Klasické</button>
+          <button class="theme-opt" data-style="tesla">⚡ Tesla</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-row-icon">🌓</div>
+        <div class="settings-row-text">
+          <div class="settings-row-label">Režim</div>
+          <div class="settings-row-sub" id="mode-sub">Denní</div>
+        </div>
+        <div class="theme-toggle" id="mode-toggle">
+          <button class="theme-opt active" data-mode="denni">☀️ Denní</button>
+          <button class="theme-opt" data-mode="nocni">🌙 Noční</button>
         </div>
       </div>
     </div>
@@ -1168,21 +1301,62 @@ function loadState() {
 }
 
 /* ════════════════════════════════════════════════════════
-   THEME
+   THEME — Styl (klasicke/tesla) + Režim (denni/nocni)
 ════════════════════════════════════════════════════════ */
-function applyTheme(t) {
-  if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
-  else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
-  else document.documentElement.removeAttribute('data-theme');
-  document.querySelectorAll('.theme-opt').forEach(b=>{
-    b.classList.toggle('active', b.dataset.theme === t);
+let appStyle = 'klasicke';
+let appMode  = 'denni';
+
+function applyAppTheme() {
+  const html = document.documentElement;
+  html.setAttribute('data-style', appStyle);
+  html.setAttribute('data-mode',  appMode);
+
+  // Nastav meta theme-color
+  const themeColor = appStyle === 'tesla'
+    ? (appMode === 'nocni' ? '#171A20' : '#F4F4F4')
+    : (appMode === 'nocni' ? '#0A1E28' : '#1B7A5E');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor);
+
+  // Aktualizuj aktivní stav tlačítek
+  document.querySelectorAll('#style-toggle .theme-opt').forEach(b => {
+    b.classList.toggle('active', b.dataset.style === appStyle);
   });
-  try { localStorage.setItem('sach_theme', t); } catch(e){}
+  document.querySelectorAll('#mode-toggle .theme-opt').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === appMode);
+  });
+
+  // Aktualizuj popisky
+  const styleSub = document.getElementById('style-sub');
+  const modeSub  = document.getElementById('mode-sub');
+  if (styleSub) styleSub.textContent = appStyle === 'tesla' ? 'Tesla' : 'Klasické';
+  if (modeSub)  modeSub.textContent  = appMode  === 'nocni' ? 'Noční' : 'Denní';
+
+  // Ulož
+  try {
+    localStorage.setItem('sach_style', appStyle);
+    localStorage.setItem('sach_mode',  appMode);
+  } catch(e) {}
 }
+
 function loadTheme() {
-  try { applyTheme(localStorage.getItem('sach_theme') || 'system'); }
-  catch(e) { applyTheme('system'); }
+  try {
+    appStyle = localStorage.getItem('sach_style') || 'klasicke';
+    appMode  = localStorage.getItem('sach_mode')  || 'denni';
+  } catch(e) {
+    appStyle = 'klasicke';
+    appMode  = 'denni';
+  }
+  applyAppTheme();
 }
+
+// Zpětná kompatibilita — starý sach_theme
+(function migrateOldTheme() {
+  try {
+    const old = localStorage.getItem('sach_theme');
+    if (old === 'dark')  { appMode = 'nocni'; localStorage.removeItem('sach_theme'); }
+    if (old === 'light') { appMode = 'denni'; localStorage.removeItem('sach_theme'); }
+  } catch(e) {}
+})();
 
 /* ════════════════════════════════════════════════════════
    CATEGORIES
@@ -1548,9 +1722,20 @@ document.getElementById('btn-settings-close').addEventListener('click', () => {
   closeOverlay('settings-overlay');
 });
 
-// Theme
-document.querySelectorAll('.theme-opt').forEach(b => {
-  b.addEventListener('click', () => applyTheme(b.dataset.theme));
+// Styl (klasicke / tesla)
+document.getElementById('style-toggle').addEventListener('click', e => {
+  const btn = e.target.closest('.theme-opt');
+  if (!btn) return;
+  appStyle = btn.dataset.style;
+  applyAppTheme();
+});
+
+// Režim (denni / nocni)
+document.getElementById('mode-toggle').addEventListener('click', e => {
+  const btn = e.target.closest('.theme-opt');
+  if (!btn) return;
+  appMode = btn.dataset.mode;
+  applyAppTheme();
 });
 
 /* ════════════════════════════════════════════════════════
