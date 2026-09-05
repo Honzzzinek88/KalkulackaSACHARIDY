@@ -1428,13 +1428,17 @@ document.getElementById('file-input').addEventListener('change', e => {
         if (name && !isNaN(carbs)) parsed.push({ name, carbs, cat, shop });
       });
       if (parsed.length === 0) { showToast('Soubor neobsahuje platná data'); return; }
-      foods = parsed;
+      // Sloučit s výchozími daty — Excel má přednost při stejném názvu
+      const defaults = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2],shop:r[3]||''}));
+      const excelNames = new Set(parsed.map(f => f.name.toLowerCase()));
+      const merged = [...parsed, ...defaults.filter(f => !excelNames.has(f.name.toLowerCase()))];
+      foods = merged;
       isCustomData = true;
       saveState();
       updateDataSourceLabel();
       renderHome();
       closeOverlay('settings-overlay');
-      showToast(`Načteno ${parsed.length} potravin ✓`);
+      showToast(`Načteno ${parsed.length} potravin z Excelu + ${merged.length - parsed.length} výchozích ✓`);
       document.getElementById('row-reset').style.display = '';
     } catch(err) {
       showToast('Chyba při čtení souboru');
