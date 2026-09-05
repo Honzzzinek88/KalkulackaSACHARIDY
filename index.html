@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sacharidy">
 <title>Sacharidy</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Sacharidy%20kalkulačka%22%2C%22short_name%22%3A%22Sacharidy%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F0F7F5%22%2C%22theme_color%22%3A%22%231B7A5E%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Crect%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2740%27%20fill%3D%27%231B7A5E%27%2F%3E%3Ctext%20y%3D%27140%27%20x%3D%2796%27%20text-anchor%3D%27middle%27%20font-size%3D%27120%27%3E%F0%9F%A5%96%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto+Mono:wght@500;700&display=swap">
 <style>
@@ -232,32 +232,66 @@ input { font-family: inherit; }
 .cat-name { font-weight: 800; font-size: .95rem; color: var(--text); }
 .cat-count { font-size: .75rem; color: var(--text2); font-weight: 600; }
 
-/* ── FOOD TILES ─────────────────────────────────────────── */
+/* ── SHOP COLORS ────────────────────────────────────────── */
+.shop-kaufland  { border-color: #E40521 !important; }
+.shop-albert    { border-color: #5BB8E8 !important; }
+.shop-globus    { border-color: #C8A800 !important; }
+.shop-hruska    { border-color: #00853E !important; }
+.shop-lidl      { border-color: #FFD700 !important; }
+.shop-tesco     { border-color: #888888 !important; }
+.shop-billa     { border-color: #E2001A !important; }
+.shop-penny     { border-color: #CC0000 !important; }
+
+.shop-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-top: 2px;
+  width: fit-content;
+  letter-spacing: .3px;
+}
+.shop-kaufland .shop-badge  { background: #E40521; color: #fff; }
+.shop-albert .shop-badge    { background: #5BB8E8; color: #fff; }
+.shop-globus .shop-badge    { background: #C8A800; color: #fff; }
+.shop-hruska .shop-badge    { background: #00853E; color: #fff; }
+.shop-lidl .shop-badge      { background: #FFD700; color: #333; }
+.shop-tesco .shop-badge     { background: #888888; color: #fff; }
+.shop-billa .shop-badge     { background: #E2001A; color: #fff; }
+.shop-penny .shop-badge     { background: #CC0000; color: #fff; }
+
+/* ── FOOD TILES — 1 sloupec ─────────────────────────────── */
 #food-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .food-tile {
   background: var(--tile-bg);
   border-radius: var(--r);
   box-shadow: var(--tile-sh);
-  padding: 14px 12px 12px;
+  padding: 11px 14px 10px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  border: 1.5px solid var(--border);
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid var(--border);
   transition: box-shadow var(--transition), transform var(--transition);
   position: relative;
-  min-height: 80px;
+  width: 100%;
+  text-align: left;
 }
-.food-tile:active { transform: scale(.97); box-shadow: var(--tile-sh-h); }
+.food-tile:active { transform: scale(.985); box-shadow: var(--tile-sh-h); }
+.food-tile-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .food-name {
   font-weight: 700;
-  font-size: .88rem;
+  font-size: .92rem;
   color: var(--text);
-  line-height: 1.3;
-  padding-right: 24px;
+  line-height: 1.25;
+  padding-right: 0;
 }
 .food-carbs {
   font-family: 'Roboto Mono', monospace;
@@ -265,14 +299,20 @@ input { font-family: inherit; }
   font-weight: 500;
   color: var(--accent);
 }
+.food-tile-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
 .fav-star {
-  position: absolute;
-  top: 8px; right: 8px;
-  font-size: 1rem;
+  font-size: 1.15rem;
   color: var(--border);
   transition: color var(--transition), transform var(--transition);
   padding: 4px;
   line-height: 1;
+  position: static;
 }
 .fav-star.active { color: var(--fav); }
 .fav-star:active { transform: scale(1.3); }
@@ -615,7 +655,6 @@ code {
 @media (min-width: 640px) {
   body { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
   #cat-grid { grid-template-columns: repeat(3, 1fr); }
-  #food-grid { grid-template-columns: repeat(3, 1fr); }
   .num-btn { height: 64px; }
 }
 </style>
@@ -665,7 +704,7 @@ code {
   <div id="home-view">
     <div id="favs-section" style="display:none">
       <div class="section-label">⭐ Oblíbené</div>
-      <div id="fav-grid" class="food-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px"></div>
+      <div id="fav-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
     </div>
     <div class="section-label">Kategorie</div>
     <div id="cat-grid"></div>
@@ -679,7 +718,7 @@ code {
   <!-- SEARCH RESULTS -->
   <div id="search-results">
     <div class="section-label">Výsledky hledání</div>
-    <div id="results-grid" class="food-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
+    <div id="results-grid" style="display:flex;flex-direction:column;gap:8px"></div>
     <div id="results-empty" class="empty-state" style="display:none">
       <span class="emoji">🔍</span>Nenalezeno. Zkus jiné slovo.
     </div>
@@ -790,7 +829,7 @@ code {
         <div class="settings-row-icon">📥</div>
         <div class="settings-row-text">
           <div class="settings-row-label">Nahrát vlastní Excel</div>
-          <div class="settings-row-sub">Sloupce: A=Název, B=Sacharidy/100g, C=Kategorie</div>
+          <div class="settings-row-sub">Sloupce: A=Název, B=Sacharidy/100g, C=Kategorie, D=Obchod</div>
         </div>
         <button class="settings-btn" id="btn-upload">Nahrát</button>
       </div>
@@ -811,6 +850,7 @@ code {
           <li>Sloupec <code>A</code> — Název potraviny</li>
           <li>Sloupec <code>B</code> — Sacharidy na 100 g (číslo)</li>
           <li>Sloupec <code>C</code> — Kategorie (např. pečivo, ovoce a zelenina…)</li>
+          <li>Sloupec <code>D</code> — Obchod (Kaufland, Albert, Globus, Hruška, Lidl, Tesco, Billa, Penny) — nepovinné</li>
           <li>Bez záhlaví v prvním řádku, nebo záhlaví přeskočíme automaticky</li>
         </ul>
       </div>
@@ -841,8 +881,23 @@ code {
 /* ════════════════════════════════════════════════════════
    DATA
 ════════════════════════════════════════════════════════ */
+/* shopClass: převede název obchodu na CSS třídu */
+function shopClass(shop) {
+  if (!shop) return '';
+  const s = shop.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+  if (s.includes('kaufland')) return 'shop-kaufland';
+  if (s.includes('albert'))   return 'shop-albert';
+  if (s.includes('globus'))   return 'shop-globus';
+  if (s.includes('hruska') || s.includes('hruška')) return 'shop-hruska';
+  if (s.includes('lidl'))     return 'shop-lidl';
+  if (s.includes('tesco'))    return 'shop-tesco';
+  if (s.includes('billa'))    return 'shop-billa';
+  if (s.includes('penny'))    return 'shop-penny';
+  return '';
+}
+
 const DEFAULT_DATA = [
-["Bageta (kornbageta)",50,"pečivo"],
+["Bageta (kornbageta)",50,"pečivo",""],
 ["Bageta celozrná",42.3,"pečivo"],
 ["Bageta cereální",46,"pečivo"],
 ["Bageta cibulová",55.3,"pečivo"],
@@ -1080,12 +1135,12 @@ function loadState() {
     if (flag === '1') {
       const d = localStorage.getItem('sach_custom');
       if (d) { foods = JSON.parse(d); isCustomData = true; }
-      else { foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]})); }
+      else { foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2],shop:r[3]||''})); }
     } else {
-      foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+      foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2],shop:r[3]||''}));
     }
   } catch(e) {
-    foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+    foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2],shop:r[3]||''}));
   }
 }
 
@@ -1144,11 +1199,18 @@ function renderHome() {
 ════════════════════════════════════════════════════════ */
 function foodTileHTML(f) {
   const isFav = favorites.has(f.name);
+  const sc = shopClass(f.shop || '');
+  const shopBadge = f.shop ? `<span class="shop-badge">${esc(f.shop)}</span>` : '';
   return `
-    <button class="food-tile" data-name="${esc(f.name)}">
-      <span class="food-name">${esc(f.name)}</span>
-      <span class="food-carbs">${f.carbs} g / 100 g</span>
-      <span class="fav-star${isFav?' active':''}" data-fav="${esc(f.name)}">★</span>
+    <button class="food-tile${sc?' '+sc:''}" data-name="${esc(f.name)}">
+      <div class="food-tile-info">
+        <span class="food-name">${esc(f.name)}</span>
+        <span class="food-carbs">${f.carbs} g / 100 g</span>
+        ${shopBadge}
+      </div>
+      <div class="food-tile-right">
+        <span class="fav-star${isFav?' active':''}" data-fav="${esc(f.name)}">★</span>
+      </div>
     </button>
   `;
 }
@@ -1160,6 +1222,7 @@ function renderFoodGrid(cat) {
   showView('food');
   document.getElementById('breadcrumb-cat').textContent = capitalize(cat);
   document.getElementById('breadcrumb').classList.add('visible');
+  navPush('food');
   bindFoodTileEvents(document.getElementById('food-grid'));
 }
 
@@ -1361,7 +1424,8 @@ document.getElementById('file-input').addEventListener('change', e => {
         const name = String(row[0]||'').trim();
         const carbs = parseFloat(String(row[1]||'').replace(',','.'));
         const cat = String(row[2]||'ostatní').trim().toLowerCase();
-        if (name && !isNaN(carbs)) parsed.push({ name, carbs, cat });
+        const shop = String(row[3]||'').trim();
+        if (name && !isNaN(carbs)) parsed.push({ name, carbs, cat, shop });
       });
       if (parsed.length === 0) { showToast('Soubor neobsahuje platná data'); return; }
       foods = parsed;
@@ -1381,7 +1445,7 @@ document.getElementById('file-input').addEventListener('change', e => {
 });
 
 document.getElementById('btn-reset').addEventListener('click', () => {
-  foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2]}));
+  foods = DEFAULT_DATA.map(r=>({name:r[0],carbs:+r[1],cat:r[2],shop:r[3]||''}));
   isCustomData = false;
   saveState();
   updateDataSourceLabel();
@@ -1402,6 +1466,7 @@ function updateDataSourceLabel() {
 function openOverlay(id) {
   document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
+  navPush('overlay');
 }
 function closeOverlay(id) {
   document.getElementById(id).classList.remove('open');
@@ -1485,18 +1550,28 @@ updateDataSourceLabel();
 renderHome();
 updateCartBar();
 
-// Tlačítko zpět na mobilu — zavře overlay místo odchodu z aplikace
-window.addEventListener('popstate', () => {
-  // Zavři nejprve otevřený overlay
+// Tlačítko zpět na mobilu — zavře overlay nebo se vrátí na home
+// Pokaždé když otevřeme overlay nebo food view, pushujeme nový stav
+function navPush(state) {
+  history.pushState({ nav: state }, '', location.href);
+}
+window.addEventListener('popstate', (e) => {
   const open = document.querySelector('.overlay.open');
-  if (open) { closeOverlay(open.id); history.pushState(null,'',location.href); return; }
-  // Pak zavři food view
-  if (currentCat) { showView('home'); renderHome(); history.pushState(null,'',location.href); return; }
-  // Jinak zůstaň (nezavírej app)
-  history.pushState(null,'',location.href);
+  if (open) {
+    closeOverlay(open.id);
+    navPush('base');
+    return;
+  }
+  if (currentCat) {
+    showView('home');
+    renderHome();
+    navPush('base');
+    return;
+  }
+  // jsme na home — push aby příští zpět nezavřel app
+  navPush('base');
 });
-// Pushni stav aby popstate fungoval
-history.pushState(null,'',location.href);
+history.replaceState({ nav: 'base' }, '', location.href);
 
 // Service Worker registration (for PWA offline)
 if ('serviceWorker' in navigator) {
