@@ -78,6 +78,77 @@
   --overlay:   rgba(0,0,0,.72);
 }
 
+
+/* ═══ GLASS DENNÍ ═══ */
+:root[data-style="glass"][data-mode="denni"] {
+  --bg:        transparent;
+  --bg-grad:   linear-gradient(135deg, #667eea 0%, #764ba2 40%, #f093fb 100%);
+  --surface:   rgba(255,255,255,0.25);
+  --surface2:  rgba(255,255,255,0.15);
+  --border:    rgba(255,255,255,0.35);
+  --text:      #FFFFFF;
+  --text2:     rgba(255,255,255,0.75);
+  --accent:    #FFFFFF;
+  --accent-lt: rgba(255,255,255,0.2);
+  --accent-dk: rgba(255,255,255,0.9);
+  --tile-bg:   rgba(255,255,255,0.18);
+  --tile-sh:   0 4px 20px rgba(0,0,0,.12);
+  --tile-sh-h: 0 8px 32px rgba(0,0,0,.20);
+  --fav:       #FFD700;
+  --danger:    #FF6B6B;
+  --result-bg: rgba(255,255,255,0.2);
+  --result-tx: #FFFFFF;
+  --overlay:   rgba(80,40,120,.50);
+  --num-bg:    rgba(255,255,255,0.15);
+  --num-tx:    #FFFFFF;
+  --num-acc:   rgba(255,255,255,0.35);
+  --num-acc-tx:#FFFFFF;
+  --num-del:   rgba(255,100,100,0.4);
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  rgba(120,80,180,0.55);
+  --glass-blur: blur(16px);
+  --r: 18px;
+  --r-sm: 12px;
+  --font-primary: 'Nunito', sans-serif;
+  --logo-weight: 800;
+  --logo-letter-spacing: -.3px;
+}
+
+/* ═══ GLASS NOČNÍ ═══ */
+:root[data-style="glass"][data-mode="nocni"] {
+  --bg:        transparent;
+  --bg-grad:   linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  --surface:   rgba(255,255,255,0.08);
+  --surface2:  rgba(255,255,255,0.05);
+  --border:    rgba(255,255,255,0.15);
+  --text:      #FFFFFF;
+  --text2:     rgba(200,200,255,0.65);
+  --accent:    #A78BFA;
+  --accent-lt: rgba(167,139,250,0.2);
+  --accent-dk: #C4B5FD;
+  --tile-bg:   rgba(255,255,255,0.06);
+  --tile-sh:   0 4px 20px rgba(0,0,0,.35);
+  --tile-sh-h: 0 8px 32px rgba(0,0,0,.50);
+  --fav:       #FCD34D;
+  --danger:    #F87171;
+  --result-bg: rgba(167,139,250,0.2);
+  --result-tx: #FFFFFF;
+  --overlay:   rgba(0,0,0,.70);
+  --num-bg:    rgba(255,255,255,0.07);
+  --num-tx:    #FFFFFF;
+  --num-acc:   rgba(167,139,250,0.35);
+  --num-acc-tx:#FFFFFF;
+  --num-del:   rgba(248,113,113,0.3);
+  --num-del-tx:#FFFFFF;
+  --sheet-bg:  rgba(20,15,50,0.75);
+  --glass-blur: blur(16px);
+  --r: 18px;
+  --r-sm: 12px;
+  --font-primary: 'Nunito', sans-serif;
+  --logo-weight: 800;
+  --logo-letter-spacing: -.3px;
+}
+
 /* ═══ TESLA DENNÍ ═══ */
 :root[data-style="tesla"][data-mode="denni"] {
   --bg:        #F4F4F4;
@@ -708,6 +779,92 @@ code {
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 
+
+/* ── GLASS STYLE OVERRIDES ──────────────────────────────── */
+:root[data-style="glass"] body {
+  background: var(--bg-grad, var(--bg));
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+:root[data-style="glass"] #topbar {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+:root[data-style="glass"] #searchbar {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+:root[data-style="glass"] #search {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+:root[data-style="glass"] #search::placeholder { color: rgba(255,255,255,0.6); }
+:root[data-style="glass"] .cat-tile {
+  background: var(--tile-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
+  box-shadow: var(--tile-sh);
+}
+:root[data-style="glass"] .food-tile {
+  background: var(--tile-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--tile-sh);
+}
+:root[data-style="glass"] .food-tile:active {
+  background: rgba(255,255,255,0.28);
+  box-shadow: var(--tile-sh-h);
+}
+:root[data-style="glass"] .cat-tile:active {
+  background: rgba(255,255,255,0.28);
+}
+:root[data-style="glass"] .sheet {
+  background: var(--sheet-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+:root[data-style="glass"] .num-btn {
+  background: var(--num-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-color: rgba(255,255,255,0.2);
+}
+:root[data-style="glass"] .num-btn.acc {
+  background: rgba(255,255,255,0.25);
+  border-color: transparent;
+}
+:root[data-style="glass"] #cart-bar {
+  background: var(--result-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+:root[data-style="glass"] .info-block {
+  background: rgba(255,255,255,0.1);
+  border-left-color: rgba(255,255,255,0.5);
+}
+:root[data-style="glass"] #content {
+  /* průhledné pozadí aby gradient prosvítal */
+  background: transparent;
+}
+:root[data-style="glass"] .preset-btn {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.25);
+}
+:root[data-style="glass"] #gram-display {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--r-sm);
+}
+
 /* ── TESLA STYLE OVERRIDES ──────────────────────────────── */
 :root[data-style="tesla"] body {
   font-family: var(--font-primary);
@@ -931,8 +1088,9 @@ code {
           <div class="settings-row-sub" id="style-sub">Klasické</div>
         </div>
         <div class="theme-toggle" id="style-toggle">
-          <button class="theme-opt active" data-style="klasicke">🟢 Klasické</button>
+          <button class="theme-opt active" data-style="klasicke">🟢 Klas.</button>
           <button class="theme-opt" data-style="tesla">⚡ Tesla</button>
+          <button class="theme-opt" data-style="glass">🪟 Glass</button>
         </div>
       </div>
 
@@ -1314,6 +1472,8 @@ function applyAppTheme() {
   // Nastav meta theme-color
   const themeColor = appStyle === 'tesla'
     ? (appMode === 'nocni' ? '#171A20' : '#F4F4F4')
+    : appStyle === 'glass'
+    ? (appMode === 'nocni' ? '#24243e' : '#764ba2')
     : (appMode === 'nocni' ? '#0A1E28' : '#1B7A5E');
   document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor);
 
@@ -1328,7 +1488,7 @@ function applyAppTheme() {
   // Aktualizuj popisky
   const styleSub = document.getElementById('style-sub');
   const modeSub  = document.getElementById('mode-sub');
-  if (styleSub) styleSub.textContent = appStyle === 'tesla' ? 'Tesla' : 'Klasické';
+  if (styleSub) styleSub.textContent = appStyle === 'tesla' ? 'Tesla' : appStyle === 'glass' ? 'Glass' : 'Klasické';
   if (modeSub)  modeSub.textContent  = appMode  === 'nocni' ? 'Noční' : 'Denní';
 
   // Ulož
@@ -1397,19 +1557,24 @@ function capitalize(s) {
   if (!s) return s;
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
+// Unikátní klíč pro potravinu = název + obchod (řeší duplikáty stejného názvu z různých obchodů)
+function foodKey(f) {
+  return f.name + (f.shop ? '|' + f.shop.toLowerCase() : '');
+}
 function foodTileHTML(f) {
-  const isFav = favorites.has(f.name);
+  const key = foodKey(f);
+  const isFav = favorites.has(key);
   const sc = shopClass(f.shop || '');
   const shopBadge = f.shop ? `<span class="shop-badge">${esc(capitalize(f.shop.toLowerCase()))}</span>` : '';
   return `
-    <button class="food-tile${sc?' '+sc:''}" data-name="${esc(f.name)}">
+    <button class="food-tile${sc?' '+sc:''}" data-name="${esc(f.name)}" data-shop="${esc(f.shop||'')}">
       <div class="food-tile-info">
         <span class="food-name">${esc(capitalize(f.name))}</span>
         <span class="food-carbs">${f.carbs} g / 100 g</span>
       </div>
       <div class="food-tile-right">
         ${shopBadge}
-        <span class="fav-star${isFav?' active':''}" data-fav="${esc(f.name)}">★</span>
+        <span class="fav-star${isFav?' active':''}" data-fav-key="${esc(key)}">★</span>
       </div>
     </button>
   `;
@@ -1430,9 +1595,12 @@ function bindFoodTileEvents(container) {
   container.querySelectorAll('.food-tile').forEach(btn => {
     btn.addEventListener('click', e => {
       const star = e.target.closest('.fav-star');
-      if (star) { toggleFav(star.dataset.fav); return; }
+      if (star) { toggleFavKey(star.dataset.favKey); return; }
       const name = btn.dataset.name;
-      const food = foods.find(f => f.name === name);
+      const shop = btn.dataset.shop || '';
+      // Najdi přesnou potravinu podle názvu i obchodu
+      const food = foods.find(f => f.name === name && (f.shop||'').toLowerCase() === shop.toLowerCase())
+                || foods.find(f => f.name === name);
       if (food) openNumpad(food);
     });
   });
@@ -1454,21 +1622,20 @@ function showView(v) {
 /* ════════════════════════════════════════════════════════
    FAVORITES
 ════════════════════════════════════════════════════════ */
-function toggleFav(name) {
-  if (favorites.has(name)) favorites.delete(name);
-  else favorites.add(name);
+function toggleFavKey(key) {
+  if (favorites.has(key)) favorites.delete(key);
+  else favorites.add(key);
   saveState();
   // aktualizuj hvězdičky v aktuálním pohledu
-  document.querySelectorAll(`.fav-star[data-fav="${CSS.escape(name)}"]`).forEach(s => {
-    s.classList.toggle('active', favorites.has(name));
+  document.querySelectorAll(`.fav-star[data-fav-key="${CSS.escape(key)}"]`).forEach(s => {
+    s.classList.toggle('active', favorites.has(key));
   });
-  // vždy znovu vykresli domovskou sekci oblíbených
   renderFavSection();
-  showToast(favorites.has(name) ? '⭐ Přidáno do oblíbených' : 'Odebráno z oblíbených');
+  showToast(favorites.has(key) ? '⭐ Přidáno do oblíbených' : 'Odebráno z oblíbených');
 }
 
 function renderFavSection() {
-  const favFoods = foods.filter(f => favorites.has(f.name));
+  const favFoods = foods.filter(f => favorites.has(foodKey(f)));
   const favsSection = document.getElementById('favs-section');
   const favGrid = document.getElementById('fav-grid');
   favsSection.style.display = favFoods.length ? '' : 'none';
